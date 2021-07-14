@@ -3,6 +3,7 @@ package com.sda.springhrapp.model;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 import javax.persistence.*;
 import java.util.HashSet;
@@ -20,7 +21,7 @@ public class Project {
     private Integer id;
     @Column(name = "projectName")
     private String name;
-    @Transient
+    @Column
     private double budget;
     @Transient
     private String currency;

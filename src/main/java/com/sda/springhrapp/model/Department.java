@@ -21,4 +21,11 @@ public class Department {
     @OneToMany(mappedBy = "department")
     private List<Employee> employeeList;
 
+    @Override
+    public String toString() {
+        return "Department{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                '}';
+    }
 }

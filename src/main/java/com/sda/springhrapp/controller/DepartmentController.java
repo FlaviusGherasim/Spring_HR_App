@@ -21,20 +21,25 @@ public class DepartmentController {
     private DepartmentService departmentService;
 
     @GetMapping("/departments")
-    public ResponseEntity<String> findDepartmentsWithEmployees(@RequestBody List<Employee> employeeList) // Don't think it's alright, can't think of a different way to use a list
+    public ResponseEntity<String> findAllDepartments()
     {
-        Department department=departmentService.findDepartmentWithEmployeeList(employeeList);
+        departmentService.findAll();
         log.info("Department found.");
         log.debug(departmentService.toString());
-        return new ResponseEntity<>("Department found "+ department, HttpStatus.OK);
+        return new ResponseEntity<>("Departments found ", HttpStatus.OK);
     }
 
     @PostMapping("/departments")
-    public ResponseEntity<String> createAccount(@RequestBody Department department)
-    {
-        departmentService.saveDepartment(department);
-        log.info(department.toString());
-        return new ResponseEntity<>(department.toString(), HttpStatus.CREATED);
+    public ResponseEntity<String> createDepartment(@RequestBody Department department) {
+        Department response = departmentService.saveDepartment(department);
+        if (response.getName() == null || response.getName().isEmpty()) {
+            log.warn("Department got saved but it's empty");
+            return new ResponseEntity<>("Department got saved but it's empty", HttpStatus.BAD_REQUEST);
+
+        } else {
+            log.info(response.toString());
+            return new ResponseEntity<>(response.toString(), HttpStatus.CREATED);
+        }
     }
 
     @DeleteMapping("/departments")
@@ -42,14 +47,19 @@ public class DepartmentController {
     public ResponseEntity<String> deleteDepartment(@RequestParam(value = "name", required = false) String name,
                                                    @RequestParam(value = "id", required = false) Integer id) {
 
+        Integer resultOfDelete;
         if ((!(isBlank(name)) && id != null) || (isBlank(name) && id == null)) {
             throw new IllegalArgumentException("Please provide one of the options. Name or Id.");
         } else if (!isBlank(name)) {
-            departmentService.deleteByName(name);
+            resultOfDelete = departmentService.deleteByName(name);
         } else {
-            departmentService.deleteById(id);
+            resultOfDelete = departmentService.deleteById(id);
         }
-        return new ResponseEntity<>("Department with id " + id + " has been removed.", HttpStatus.OK);
+        if (resultOfDelete == 1) {
+            return new ResponseEntity<>("Department with id " + id + " has been removed.", HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>("Department was not deleted because it does not exist or something went wrong.", HttpStatus.BAD_REQUEST);
+        }
     }
 
     private boolean isBlank(String name) {
@@ -57,9 +67,8 @@ public class DepartmentController {
     }
 
     @PutMapping("/departments")
-    public ResponseEntity<Department> updateDepartment(@RequestBody Department department)
-    {
-        Department updatedDepartment= departmentService.saveDepartment(department);
+    public ResponseEntity<Department> updateDepartment(@RequestBody Department department) {
+        Department updatedDepartment = departmentService.saveDepartment(department);
         return ResponseEntity.ok(updatedDepartment);
     }
 

@@ -28,8 +28,8 @@ public class EmployeeService {
         return employeeRepositoryIf.deleteEmployeeBySalaryIsBetween(x, y);
     }
 
-    public List<Employee> findAllEmployeesByProjects(Set<Project> projectSet)
-    {
-        return employeeRepositoryIf.findEmployeeByProjectsEquals(projectSet);
-    }
+//    public List<Employee> findAllEmployeesByProjects(Set<Project> projectSet)
+//    {
+//        return employeeRepositoryIf.findEmployeeByProjectsEquals(projectSet);
+//    }
 }

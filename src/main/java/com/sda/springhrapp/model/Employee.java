@@ -3,6 +3,7 @@ package com.sda.springhrapp.model;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 import javax.persistence.*;
 import java.util.HashSet;
@@ -38,6 +39,7 @@ public class Employee {
     @ManyToOne
     @JoinColumn(name = "department_id")
     private Department department;
+
 
     @ManyToMany
     @JoinTable(name = "employees_project",

@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-@Component
+@Repository
 public interface AccountRepositoryIf extends CrudRepository<Account, Integer> {
     Integer deleteAccountById(Integer id);
     List<Account> findAll();

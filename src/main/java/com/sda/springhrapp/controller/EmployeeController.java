@@ -21,17 +21,19 @@ public class EmployeeController {
 
     @Autowired
     private EmployeeService employeeService;
+//todo FindAll Employees, find specific employees.
 
 
-    @GetMapping("/employees")
-    public ResponseEntity<String> findAllEmployeesBasedOnProjects(@RequestBody Set<Project> projectSet) // Don't think it's alright, can't think of a different way to use a Set
-    {
-        List<Employee> employeeList= employeeService.findAllEmployeesByProjects(projectSet);
-        log.info("Employees found.");
-        log.debug(employeeList.toString());
-        return new ResponseEntity<>(employeeList.toString(), HttpStatus.OK);
-    }
+//    @GetMapping("/employees")
+//    public ResponseEntity<String> findAllEmployeesBasedOnProjects()
+//    {
+//        List<Employee> employeeList= employeeService.findAllEmployeesByProjects();
+//        log.info("Employees found.");
+//        log.debug(employeeList.toString());
+//        return new ResponseEntity<>(employeeList.toString(), HttpStatus.OK);
+//    }
 
+    //todo Assign Employee to projects, add ID for employees and project
     @PostMapping("/employees")
     public ResponseEntity<String> createEmployee(@RequestBody Employee employee)
     {

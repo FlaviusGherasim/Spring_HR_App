@@ -15,16 +15,14 @@ public class AccountService {
     @Autowired
     private AccountRepositoryIf accountRepositoryIf;
 
-    public Account saveAccount(Account account)
-    {
+    public Account saveAccount(Account account) {
         accountRepositoryIf.save(account);
         log.info("Account saved succesfully.");
         return account;
     }
 
-    public Integer deleteAccountById( Integer id)
-    {
-        Integer account= accountRepositoryIf.deleteAccountById(id);
+    public Integer deleteAccountById(Integer id) {
+        Integer account = accountRepositoryIf.deleteAccountById(id);
         if (account != 0) {
             log.info("account with id " + id + " was game ended");
         } else {
@@ -32,8 +30,8 @@ public class AccountService {
         }
         return account;
     }
-    public List<Account> findAllAccounts()
-    {
+
+    public List<Account> findAllAccounts() {
 //        Iterable<Account> allUsers2 = accountRepositoryIf.findAll();
 //        return (List<Account>) allUsers2;
 

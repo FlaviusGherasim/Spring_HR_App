@@ -7,6 +7,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -18,9 +20,9 @@ public class DepartmentService {
 
     public Department saveDepartment(Department department)
     {
-        departmentRepositoryIf.save(department);
+        Department departmentSaved = departmentRepositoryIf.save(department);
         log.info("Department saved succesfully.");
-        return department;
+        return departmentSaved;
     }
 
     public Integer deleteById(Integer id) {
@@ -29,7 +31,7 @@ public class DepartmentService {
         if (department == 0) {
             log.warn("Department didn't get game ended");
         } else {
-            log.info("Department with id " + department + " was game ended.");
+            log.info("Department with id " + id + " was game ended.");
         }
         return department;
     }
@@ -45,9 +47,9 @@ public class DepartmentService {
         return department;
     }
 
-    public Department findDepartmentWithEmployeeList(List<Employee> employeeList)
+    public List<Department> findAll()
     {
-        return departmentRepositoryIf.findDepartmentByEmployeeList(employeeList);
+        return departmentRepositoryIf.findAll();
     }
 
 }
