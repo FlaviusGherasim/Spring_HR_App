@@ -52,4 +52,14 @@ public class DepartmentService {
         return departmentRepositoryIf.findAll();
     }
 
+    public Department findDepartmentByName(String name)
+    {
+        return departmentRepositoryIf.findByName(name);
+    }
+
+    public Department findDepartmentById(Integer id)
+    {
+        return departmentRepositoryIf.findByIdIs(id);
+    }
+
 }

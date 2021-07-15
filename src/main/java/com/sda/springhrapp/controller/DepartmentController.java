@@ -1,7 +1,6 @@
 package com.sda.springhrapp.controller;
 
 import com.sda.springhrapp.model.Department;
-import com.sda.springhrapp.model.Employee;
 import com.sda.springhrapp.service.DepartmentService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,12 +20,31 @@ public class DepartmentController {
     private DepartmentService departmentService;
 
     @GetMapping("/departments")
-    public ResponseEntity<String> findAllDepartments()
-    {
-        departmentService.findAll();
+    public ResponseEntity<String> findAllDepartments() {
+        List<Department> departmentList;
+        departmentList = departmentService.findAll();
         log.info("Department found.");
         log.debug(departmentService.toString());
-        return new ResponseEntity<>("Departments found ", HttpStatus.OK);
+        return new ResponseEntity<>("Departments found: " + departmentList, HttpStatus.OK);
+    }
+
+    @GetMapping("/departments/find")
+    public ResponseEntity<String> findDepartmentByIdOrName(@RequestParam(value = "name", required = false) String name,
+                                                           @RequestParam(value = "id", required = false) Integer id) {
+
+        Department department;
+        if ((!(isBlank(name)) && id != null) || (isBlank(name) && id == null)) {
+            throw new IllegalArgumentException("Please provide one of the options. Name or Id.");
+        } else if (!isBlank(name)) {
+            department = departmentService.findDepartmentByName(name);
+        } else {
+            department = departmentService.findDepartmentById(id);
+        }
+        return new ResponseEntity<>(department.toString(), HttpStatus.OK);
+    }
+
+    private boolean isBlank(String name) {
+        return name == null || name.isEmpty();
     }
 
     @PostMapping("/departments")
@@ -62,9 +80,6 @@ public class DepartmentController {
         }
     }
 
-    private boolean isBlank(String name) {
-        return name == null || name.isEmpty();
-    }
 
     @PutMapping("/departments")
     public ResponseEntity<Department> updateDepartment(@RequestBody Department department) {

@@ -24,19 +24,29 @@ public class EmployeeController {
 //todo FindAll Employees, find specific employees.
 
 
-//    @GetMapping("/employees")
-//    public ResponseEntity<String> findAllEmployeesBasedOnProjects()
-//    {
-//        List<Employee> employeeList= employeeService.findAllEmployeesByProjects();
-//        log.info("Employees found.");
-//        log.debug(employeeList.toString());
-//        return new ResponseEntity<>(employeeList.toString(), HttpStatus.OK);
-//    }
+    @GetMapping("/employees")
+    public ResponseEntity<String> findAll() {
+        List<Employee> employeeList = employeeService.findAll();
+        log.info("Employees found.");
+        log.debug(employeeList.toString());
+        return new ResponseEntity<>(employeeList.toString(), HttpStatus.OK);
+    }
+
+    @GetMapping("/employees/find")
+    public ResponseEntity<String> findSpecificEmployee(@RequestParam(value = "firstName", required = false) String firstName,
+                                                       @RequestParam(value = "LastName", required = false) String lastName,
+                                                       @RequestParam(value = "email", required = false) String email,
+                                                       @RequestParam(value = "phoneNumber", required = false) String phoneNumber,
+                                                       @RequestParam(value = "departmentId", required = false) Integer id) {
+
+        Employee foundEmployee;
+        foundEmployee = employeeService.findSpecificEmployee(firstName, lastName, email, phoneNumber, id);
+        return new ResponseEntity<>(foundEmployee.toString(), HttpStatus.OK);
+    }
 
     //todo Assign Employee to projects, add ID for employees and project
     @PostMapping("/employees")
-    public ResponseEntity<String> createEmployee(@RequestBody Employee employee)
-    {
+    public ResponseEntity<String> createEmployee(@RequestBody Employee employee) {
         employeeService.saveEmployee(employee);
         log.info(employee.toString());
         return new ResponseEntity<>(employee.toString(), HttpStatus.CREATED);
@@ -45,17 +55,16 @@ public class EmployeeController {
     @DeleteMapping("/employees")
     @Transactional
     public ResponseEntity<String> deleteEmployee(@RequestParam(value = "minSalary") Integer minSalary,
-                                             @RequestParam(value = "maxSalary") Integer maxSalary) {
+                                                 @RequestParam(value = "maxSalary") Integer maxSalary) {
 
-
-        employeeService.deleteEmployeesWithSalariesBetween(minSalary, maxSalary);
-        return new ResponseEntity<>("Employees with salary between the specific values were isekaied.", HttpStatus.OK);
+        List<Employee> deletedEmployee;
+        deletedEmployee = employeeService.deleteEmployeesWithSalariesBetween(minSalary, maxSalary);
+        return new ResponseEntity<>("Employees with salary between the specific values were isekaied: " + deletedEmployee, HttpStatus.OK);
     }
 
     @PutMapping("/employees")
-    public ResponseEntity<Employee> updateEmployee(@RequestBody Employee employee)
-    {
-        Employee updatedEmployee= employeeService.saveEmployee(employee);
+    public ResponseEntity<Employee> updateEmployee(@RequestBody Employee employee) {
+        Employee updatedEmployee = employeeService.saveEmployee(employee);
         return ResponseEntity.ok(updatedEmployee);
     }
 

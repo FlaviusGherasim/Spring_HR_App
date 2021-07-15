@@ -12,4 +12,6 @@ public interface DepartmentRepositoryIf extends CrudRepository<Department,Intege
     Integer deleteDepartmentByName(String name);
     Integer deleteDepartmentById(Integer id);
     List<Department> findAll();
+    Department findByName(String name);
+    Department findByIdIs(Integer id);
 }
