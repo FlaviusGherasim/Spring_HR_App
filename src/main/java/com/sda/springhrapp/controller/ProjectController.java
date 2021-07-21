@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Set;
 
 @RestController
 @Slf4j
@@ -18,7 +19,7 @@ public class ProjectController {
     @Autowired
     private ProjectService projectService;
 
-    @GetMapping("/projects")
+    @GetMapping("/projects/findByBudget")
     public ResponseEntity<String> findAllProjects(@RequestParam(value = "budget") double x)
     {
         List<Project> projectList= projectService.findAllProjectWithBudget(x);
@@ -26,6 +27,26 @@ public class ProjectController {
         log.debug(projectList.toString());
         return new ResponseEntity<>(projectList.toString(), HttpStatus.OK);
     }
+
+    @GetMapping("/projects/findByID")
+    public ResponseEntity<String> findProjectById(@RequestParam Integer id)
+    {
+        Project project= projectService.findProjectById(id);
+        return new ResponseEntity<>(project.toString(),HttpStatus.OK);
+    }
+
+    @GetMapping("/projects/findByDepartmentName")
+    public ResponseEntity<String> findProjectByDepartmentName(@RequestParam String departmentName)
+    {
+        Set<String> projectSet=projectService.findByDepartmentName(departmentName);
+        return new ResponseEntity<>("Projects from "+ departmentName+ " are: "+ projectSet.toString(), HttpStatus.OK);
+    }
+//    @GetMapping("/projects/findByName")
+//    public ResponseEntity<String> findProjectByName(@RequestParam String projectName)
+//    {
+//       Project project= projectService.findProjectByName(projectName);
+//       return new ResponseEntity<>(project.toString(), HttpStatus.OK);
+//    }
 
     @PostMapping("/projects")
     public ResponseEntity<String> createProject(@RequestBody Project project) {

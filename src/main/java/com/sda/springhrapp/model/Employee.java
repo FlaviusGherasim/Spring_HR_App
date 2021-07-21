@@ -32,7 +32,7 @@ public class Employee {
     @Column(name="salary")
     private Integer salary;
 
-    @OneToOne
+    @OneToOne()
     @JoinColumn(name = "account_id") // account_id is from the database.
     private Account account;
 
@@ -47,5 +47,17 @@ public class Employee {
             inverseJoinColumns = {@JoinColumn(name = "project_Id")})
     private Set<Project> projects= new HashSet<>();
 
+    @Override
+    public String toString() {
+        return "Employee{" +
+                "id=" + id+ '\'' +
+                "firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", dateOfBirth=" + dateOfBirth +
+                ", phoneNumber='" + phoneNumber + '\'' +
+                ", email='" + email + '\'' +
+                ", salary=" + salary +
+                '}';
+    }
 }
 

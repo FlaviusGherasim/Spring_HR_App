@@ -17,20 +17,29 @@ import java.util.Set;
 public class Project {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "projectId")
+    @Column
     private Integer id;
-    @Column(name = "projectName")
+    @Column
     private String name;
     @Column
     private double budget;
-    @Transient
+    @Column
     private String currency;
     @Enumerated(EnumType.STRING)
-    @Column(name="type")
+    @Column
     private ProjectType projectType;
 
-    @ManyToMany(mappedBy = "projects")
+    @ManyToMany(mappedBy = "projects", cascade = CascadeType.ALL)
     private Set<Employee> employees= new HashSet<>();
 
-
+    @Override
+    public String toString() {
+        return "Project{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", budget=" + budget +
+                ", currency='" + currency + '\'' +
+                ", projectType=" + projectType +
+                '}';
+    }
 }

@@ -1,8 +1,6 @@
 package com.sda.springhrapp.controller;
 
-import com.sda.springhrapp.model.Account;
 import com.sda.springhrapp.model.Employee;
-import com.sda.springhrapp.model.Project;
 import com.sda.springhrapp.service.EmployeeService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +10,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Set;
 
 @RestController
 @Slf4j
@@ -21,10 +18,13 @@ public class EmployeeController {
 
     @Autowired
     private EmployeeService employeeService;
-//todo FindAll Employees, find specific employees.
 
+    @GetMapping("employees/department")
+    public ResponseEntity<String> findEmployeesByDepartment(@RequestParam(value = "departmentName") String departmentName) {
+        return new ResponseEntity<>(employeeService.findEmployeesByDepartmentName(departmentName).toString(), HttpStatus.OK);
+    }
 
-    @GetMapping("/employees")
+    @GetMapping("/mployees")
     public ResponseEntity<String> findAll() {
         List<Employee> employeeList = employeeService.findAll();
         log.info("Employees found.");
@@ -36,15 +36,67 @@ public class EmployeeController {
     public ResponseEntity<String> findSpecificEmployee(@RequestParam(value = "firstName", required = false) String firstName,
                                                        @RequestParam(value = "LastName", required = false) String lastName,
                                                        @RequestParam(value = "email", required = false) String email,
-                                                       @RequestParam(value = "phoneNumber", required = false) String phoneNumber,
-                                                       @RequestParam(value = "departmentId", required = false) Integer id) {
+                                                       @RequestParam(value = "phoneNumber", required = false) String phoneNumber) {
 
-        Employee foundEmployee;
-        foundEmployee = employeeService.findSpecificEmployee(firstName, lastName, email, phoneNumber, id);
-        return new ResponseEntity<>(foundEmployee.toString(), HttpStatus.OK);
+//        List<Employee> foundEmployee;
+//        foundEmployee = employeeService.findSpecificEmployee(firstName, lastName, email, phoneNumber, id);
+//        return new ResponseEntity<>(foundEmployee.toString(), HttpStatus.OK);
+        if (isBlank(firstName) && isBlank(lastName)) {
+            List<Employee> employeeList;
+            employeeList = employeeService.findSpecificEmployeeByFirstAndLastName(firstName, lastName);
+            return new ResponseEntity<>(employeeList.toString(), HttpStatus.OK);
+        } else if (isBlank(email) || isBlank(phoneNumber)) {
+            List<Employee> employeeList;
+            employeeList = employeeService.findSpecificEmployeeByPhoneNumberOrEmail(email, phoneNumber);
+            return new ResponseEntity<>(employeeList.toString(), HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>("Something went wrong, check your parameters", HttpStatus.BAD_REQUEST);
+        }
     }
 
-    //todo Assign Employee to projects, add ID for employees and project
+    private boolean isBlank(String condition) {
+        return (condition != null && !condition.isEmpty());
+    }
+
+    @GetMapping("/employees/earliestEmployee")
+    public ResponseEntity<String> findEarliestEmployeeByAccount()
+    {
+        Employee employee= employeeService.findEarliestEmployee();
+        return new ResponseEntity<>("earliest employee is "+ employee.toString(), HttpStatus.OK);
+
+    }
+//    @GetMapping("/employees/employeesByProjectName")
+//    public ResponseEntity<String> findEmployeesByProjectName(@RequestParam String projectName)
+//    {
+//        List<Employee> employeeList= employeeService.findEmployeesByProjectName(projectName);
+//        return new ResponseEntity<>("List is "+ employeeList.toString(), HttpStatus.OK);
+//
+//    }
+
+    @GetMapping("/employees/employeesByProjectName")
+    public ResponseEntity<String> findEmployeesByProjectName(@RequestParam String projectName)
+    {
+        List<Employee> employeeList= employeeService.findEmployeesByProjectName(projectName);
+        return new ResponseEntity<>("List is "+ employeeList.toString(), HttpStatus.OK);
+
+    }
+
+    @GetMapping("/employees/employeeWithHighestProjectCount")
+    public ResponseEntity<String> findEmployeeWithHighestProjectCount()
+    {
+       Employee employee= employeeService.employeeWithHighestProjectCount();
+        return new ResponseEntity<>("Employee with highest project count is "+ employee.toString(), HttpStatus.OK);
+
+    }
+
+@GetMapping("/employees/employeesOrderedByAge")
+    public ResponseEntity<String> orderEmployeesByAgeInReverse()
+    {
+        List<Employee> employeeList= employeeService.employeesOrderedByAge();
+        return new ResponseEntity<>("List is "+ employeeList.toString(), HttpStatus.OK);
+    }
+
+
     @PostMapping("/employees")
     public ResponseEntity<String> createEmployee(@RequestBody Employee employee) {
         employeeService.saveEmployee(employee);
@@ -52,7 +104,7 @@ public class EmployeeController {
         return new ResponseEntity<>(employee.toString(), HttpStatus.CREATED);
     }
 
-    @DeleteMapping("/employees")
+    @DeleteMapping("/employees/deleteBySalaryBetween")
     @Transactional
     public ResponseEntity<String> deleteEmployee(@RequestParam(value = "minSalary") Integer minSalary,
                                                  @RequestParam(value = "maxSalary") Integer maxSalary) {
@@ -68,9 +120,11 @@ public class EmployeeController {
         return ResponseEntity.ok(updatedEmployee);
     }
 
-    @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<String> catchIllegalArgumentException(IllegalArgumentException e) {
-        return new ResponseEntity<>("Illegal arguments " + e.getMessage(), HttpStatus.BAD_REQUEST);
+    @PutMapping("/employees/assignProjects")
+    public ResponseEntity<String> assignEmployeeToProject(@RequestParam(value = "employeeId") Integer employeeId,
+                                                          @RequestParam(value = "projectId") Integer projectId) {
+        employeeService.assignEmployeeToProject(employeeId, projectId);
+        return new ResponseEntity<>("Employee with id " + employeeId + " assigned to project with id " + projectId, HttpStatus.OK);
     }
 
 }

@@ -1,5 +1,6 @@
 package com.sda.springhrapp.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 
 import javax.persistence.*;
@@ -18,7 +19,8 @@ public class Department {
     @Column // optional - identical names
     private String name;
 
-    @OneToMany(mappedBy = "department")
+    @OneToMany(mappedBy = "department", cascade = CascadeType.MERGE)
+    @JsonIgnoreProperties("department")
     private List<Employee> employeeList;
 
     @Override
